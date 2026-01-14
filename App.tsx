@@ -48,7 +48,6 @@ const App: React.FC = () => {
   const [animating, setAnimating] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
-  const [hasBookmark, setHasBookmark] = useState(false);
 
   const story = [
     "فارس کی دنیا زویا سے شروع ہوتی تھی اور زویا پر ہی ختم ہوتی۔ وہ جب بھی زویا کو دیکھتا، اسے لگتا جیسے زندگی کا سب سے خوبصورت منظر اس کے سامنے ہے۔ زویا نے آج سرخ لباس پہنا تھا، جس میں وہ کسی پری سے کم نہیں لگ رہی تھی۔ فارس اسے بس دیکھتا ہی رہ گیا۔",
@@ -83,96 +82,28 @@ const App: React.FC = () => {
     "آخر میں فارس نے زویا کا ہاتھ پکڑا اور اسے سینے سے لگا لیا۔ 'ہمارا یہ سفر اب کبھی ختم نہیں ہوگا۔ ہم ایک دوسرے کے ہو چکے ہیں اور کوئی طاقت ہمیں جدا نہیں کر سکتی۔ ہماری یہ شدت ہمیشہ زندہ رہے گی۔' (داستان ختم ہوئی)"
   ];
 
-  useEffect(() => {
-    const saved = localStorage.getItem('shiddat_bookmark');
-    if (saved !== null) setHasBookmark(true);
-  }, []);
-
   const handlePageChange = (index: number) => {
     if (animating || index < 0 || index >= story.length) return;
     setAnimating(true);
     setTimeout(() => {
       setCurrentPage(index);
-      localStorage.setItem('shiddat_bookmark', index.toString());
       setAnimating(false);
-    }, 400);
-  };
-
-  const checkCipher = () => {
-    if (password.toLowerCase() === 'zainab') {
-      setView('reader');
-      setError(false);
-    } else {
-      setError(true);
-      setPassword('');
-    }
-  };
-
-  const resumeJourney = () => {
-    const saved = localStorage.getItem('shiddat_bookmark');
-    if (saved !== null) setCurrentPage(parseInt(saved));
-    setView('password');
+    }, 300);
   };
 
   if (view === 'welcome') {
     return (
-      <div className="h-[100dvh] flex flex-col items-center justify-between bg-black overflow-hidden relative selection:bg-red-800/40">
+      <div className="h-[100dvh] flex flex-col items-center justify-center bg-black overflow-hidden relative">
         <AmbientBackground />
-        
-        <div className="flex-1 flex flex-col items-center justify-center relative z-10 text-center px-8 w-full">
-          <div className="mb-10 space-y-4 animate-fade-up">
-            <span className="text-red-600/60 tracking-[1.2em] font-medium text-[9px] uppercase block mb-4">A Simple Story of Obsession</span>
-            <h1 className="text-white text-6xl md:text-9xl font-black tracking-tighter leading-none italic select-none drop-shadow-2xl">SHIDDAT</h1>
-            <div className="flex items-center justify-center space-x-8 space-x-reverse mt-4 opacity-50">
-               <div className="h-[1px] w-16 bg-gradient-to-l from-transparent via-white/50 to-transparent"></div>
-               <span className="nastaliq text-3xl text-white font-bold">شدت</span>
-               <div className="h-[1px] w-16 bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
-            </div>
-          </div>
-          
-          <div className="flex flex-col space-y-4 w-full max-w-xs mt-10 animate-fade-up delay-200">
-            <button 
-              onClick={() => { setView('password'); setCurrentPage(0); }}
-              className="group relative px-8 py-5 bg-white hover:bg-red-700 transition-all duration-700 overflow-hidden shadow-2xl"
-            >
-              <span className="relative z-10 text-black group-hover:text-white font-black tracking-[0.4em] text-[10px] uppercase">Begin Narrative</span>
-              <div className="absolute inset-0 bg-red-700 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></div>
-            </button>
-
-            {hasBookmark && (
-              <button 
-                onClick={resumeJourney}
-                className="px-8 py-4 border border-white/10 text-white/50 text-[9px] uppercase tracking-[0.3em] hover:bg-white/10 hover:text-white transition-all backdrop-blur-xl"
-              >
-                Recall Memory
-              </button>
-            )}
-
-            <button 
-              onClick={() => window.print()}
-              className="px-8 py-3 text-red-700/50 text-[8px] uppercase tracking-[0.3em] hover:text-red-500 transition-all font-bold"
-            >
-              Preserve as PDF
-            </button>
-          </div>
+        <div className="relative z-10 text-center px-8">
+          <h1 className="text-white text-7xl md:text-9xl font-black tracking-tighter italic mb-12">SHIDDAT</h1>
+          <button 
+            onClick={() => setView('password')}
+            className="px-12 py-5 bg-white text-black font-black tracking-[0.4em] text-[10px] uppercase hover:bg-red-700 hover:text-white transition-all duration-500"
+          >
+            Open Manuscript
+          </button>
         </div>
-
-        <div className="pb-12 text-center relative z-10 w-full animate-fade-up delay-500">
-          <div className="flex flex-col items-center">
-            <span className="text-white/10 text-[8px] tracking-[1.8em] uppercase font-bold mb-4">Authored by</span>
-            <div className="flex flex-col space-y-2">
-              <span className="text-white/90 text-xl font-sans tracking-[0.3em] font-light">ZOHAIB <span className="font-black">NAQVI</span></span>
-              <div className="w-10 h-[1px] bg-red-700/30 mx-auto"></div>
-              <span className="nastaliq text-white/20 text-lg">زوہیب نقوی</span>
-            </div>
-          </div>
-        </div>
-        <style>{`
-          @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-          .animate-fade-up { animation: fadeUp 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
-          .delay-200 { animation-delay: 0.2s; }
-          .delay-500 { animation-delay: 0.5s; }
-        `}</style>
       </div>
     );
   }
@@ -182,131 +113,67 @@ const App: React.FC = () => {
       <div className="h-[100dvh] flex flex-col items-center justify-center bg-black px-8 overflow-hidden relative">
         <AmbientBackground />
         <div className="w-full max-w-xs space-y-12 text-center relative z-10">
-          <div className="space-y-4">
-            <h2 className="text-white text-3xl font-black tracking-[0.3em] uppercase italic opacity-90">Security Cipher</h2>
-            <p className="text-white/30 text-[9px] uppercase tracking-[0.4em]">Credentials Required</p>
-          </div>
-          
-          <div className="relative">
-            <input 
-              type="password"
-              value={password}
-              onChange={(e) => { setPassword(e.target.value); setError(false); }}
-              onKeyPress={(e) => e.key === 'Enter' && checkCipher()}
-              autoFocus
-              className={`w-full bg-transparent border-b border-white/10 py-5 text-center text-4xl focus:outline-none transition-all duration-700 font-sans tracking-[0.4em] ${error ? 'border-red-700 text-red-700 animate-shake' : 'text-white/80 focus:border-red-700'}`}
-              placeholder="••••••"
-            />
-          </div>
-
-          <div className="space-y-4 pt-8">
-            <button 
-              onClick={checkCipher}
-              className="w-full py-5 bg-white text-black font-black uppercase tracking-[0.6em] text-[10px] hover:bg-red-700 hover:text-white transition-all shadow-2xl active:scale-95 duration-500"
-            >
-              Verify
-            </button>
-            <button 
-              onClick={() => setView('welcome')}
-              className="text-white/20 text-[8px] uppercase tracking-[0.5em] hover:text-white transition-colors"
-            >
-              Back
-            </button>
-          </div>
+          <input 
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && setView('reader')}
+            className="w-full bg-transparent border-b border-white/10 py-5 text-center text-3xl focus:outline-none text-white tracking-[0.4em]"
+            placeholder="••••••"
+            autoFocus
+          />
+          <button 
+            onClick={() => setView('reader')}
+            className="w-full py-5 bg-white text-black font-black uppercase tracking-[0.6em] text-[10px] hover:bg-red-700 hover:text-white transition-all"
+          >
+            Verify
+          </button>
         </div>
-        <style>{`
-          @keyframes shake { 0%, 100% { transform: translateX(0); } 15% { transform: translateX(-10px); } 30% { transform: translateX(10px); } 45% { transform: translateX(-8px); } 60% { transform: translateX(8px); } }
-          .animate-shake { animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
-        `}</style>
       </div>
     );
   }
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-black text-white selection:bg-red-800/60 relative overflow-hidden">
-      <div className="print-only p-20 bg-white text-black">
-        <h1 className="text-7xl font-black text-center mb-4">SHIDDAT</h1>
-        <p className="text-center mb-20 text-sm uppercase tracking-[1em] font-light">By ZOHAIB NAQVI</p>
-        {story.map((text, idx) => (
-          <div key={idx} className="page-break nastaliq mb-20 text-2xl leading-[2.6] text-justify border-b border-gray-100 pb-20">
-            <span className="block text-xs font-sans mb-10 opacity-30 uppercase tracking-widest">Part {idx + 1}</span>
-            {text}
-          </div>
-        ))}
+    <div className="h-[100dvh] flex flex-col bg-black text-white relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-white/5 z-50">
+        <div 
+          className="h-full bg-red-700 transition-all duration-700" 
+          style={{ width: `${((currentPage + 1) / story.length) * 100}%` }}
+        />
       </div>
 
-      <div className="no-print h-full flex flex-col relative z-10">
-        <div className="absolute top-0 left-0 w-full h-[2px] bg-white/5 z-50">
-          <div 
-            className="h-full bg-red-700 shadow-[0_0_15px_#dc2626] transition-all duration-700 ease-in-out" 
-            style={{ width: `${((currentPage + 1) / story.length) * 100}%` }}
-          />
-        </div>
-
-        <main className="flex-1 flex items-center justify-center p-6 md:p-12 overflow-hidden">
-          <div 
-            className={`w-full max-w-4xl transition-all duration-500 ease-out ${animating ? 'opacity-0 scale-95 translate-y-4 blur-sm' : 'opacity-100 scale-100 translate-y-0 blur-0'}`}
+      <main className="flex-1 flex items-center justify-center p-6 md:p-12 overflow-hidden">
+        <div className={`w-full max-w-4xl transition-all duration-300 ${animating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+          <article 
+            className="nastaliq text-white/95 text-center leading-[2.2] md:leading-[2.4]"
+            style={{ fontSize: 'clamp(1rem, 3.5dvh, 1.8rem)' }}
           >
-            <article 
-              className="nastaliq text-white/95 text-center leading-[2.4] md:leading-[2.6] drop-shadow-2xl font-medium"
-              style={{
-                fontSize: 'clamp(1.2rem, 3.8dvh, 2.5rem)',
-                display: '-webkit-box',
-                WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: 10,
-                overflow: 'hidden'
-              }}
-            >
-              {story[currentPage]}
-            </article>
-          </div>
-        </main>
+            {story[currentPage]}
+          </article>
+        </div>
+      </main>
 
-        <nav className="w-full bg-gradient-to-t from-black via-black to-transparent px-6 py-8 md:py-12 border-t border-white/5">
-          <div className="max-w-2xl mx-auto flex justify-between items-center">
-            <button 
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 0 || animating}
-              className={`text-white/20 text-[9px] uppercase tracking-[0.4em] font-black transition-all p-3 ${
-                currentPage === 0 ? 'opacity-0 pointer-events-none' : 'hover:text-white'
-              }`}
-            >
-              Prev
-            </button>
+      <nav className="w-full bg-black px-6 py-8 border-t border-white/5">
+        <div className="max-w-2xl mx-auto flex justify-between items-center">
+          <button 
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 0 || animating}
+            className={`text-white/20 text-[9px] uppercase tracking-[0.4em] font-black p-3 ${currentPage === 0 ? 'opacity-0' : 'hover:text-white'}`}
+          >
+            Prev
+          </button>
 
-            <div className="flex flex-col items-center">
-               <span className="text-red-700 font-black text-2xl md:text-3xl font-sans tracking-tighter leading-none">{String(currentPage + 1).padStart(2, '0')}</span>
-               <div className="w-6 h-[1px] bg-white/10 my-2"></div>
-               <span className="text-white/10 text-[8px] uppercase tracking-widest">Part {story.length}</span>
-            </div>
+          <span className="text-red-700 font-black text-2xl">{currentPage + 1}</span>
 
-            {currentPage < story.length - 1 ? (
-              <button 
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={animating}
-                className="text-white text-[9px] uppercase tracking-[0.4em] font-black bg-red-800/20 hover:bg-red-700 hover:shadow-[0_0_30px_rgba(185,28,28,0.5)] transition-all px-10 py-4 rounded-none border border-red-700/30 active:scale-95 duration-500"
-              >
-                Next
-              </button>
-            ) : (
-              <button 
-                onClick={() => setView('welcome')}
-                className="text-black text-[9px] uppercase tracking-[0.4em] font-black bg-white hover:bg-red-700 hover:text-white transition-all px-10 py-4 rounded-none active:scale-95"
-              >
-                Finish
-              </button>
-            )}
-          </div>
-        </nav>
-      </div>
-
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @media print {
-            .nastaliq { font-size: 2rem !important; line-height: 2.6 !important; }
-        }
-      `}</style>
+          <button 
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === story.length - 1 || animating}
+            className={`text-white text-[9px] uppercase tracking-[0.4em] font-black bg-red-800/20 px-10 py-4 ${currentPage === story.length - 1 ? 'opacity-0' : 'hover:bg-red-700'}`}
+          >
+            Next
+          </button>
+        </div>
+      </nav>
     </div>
   );
 };
