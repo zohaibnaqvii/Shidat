@@ -49,7 +49,6 @@ const App: React.FC = () => {
   const [password, setPassword] = useState('');
   const [pdfPassword, setPdfPassword] = useState('');
   const [showPdfPrompt, setShowPdfPrompt] = useState(false);
-  const [error, setError] = useState(false);
 
   const story = useMemo(() => {
     const baseStory = [
@@ -102,8 +101,16 @@ const App: React.FC = () => {
     }, 300);
   };
 
+  const verifyEntry = () => {
+    if (password === 'Z') {
+      setView('reader');
+    } else {
+      alert('غلط پاس ورڈ');
+    }
+  };
+
   const verifyAndDownload = () => {
-    if (pdfPassword === '1234' || pdfPassword === password) { // Simple logic for demonstration
+    if (pdfPassword === 'Z') {
       setShowPdfPrompt(false);
       setPdfPassword('');
       window.print();
@@ -140,7 +147,7 @@ const App: React.FC = () => {
                 type="password"
                 value={pdfPassword}
                 onChange={(e) => setPdfPassword(e.target.value)}
-                className="w-full bg-transparent border-b border-white/20 py-4 text-center text-2xl outline-none focus:border-red-600 transition-colors"
+                className="w-full bg-transparent border-b border-white/20 py-4 text-center text-2xl outline-none focus:border-red-600 transition-colors text-white"
                 placeholder="PASSWORD"
                 autoFocus
                 onKeyDown={(e) => e.key === 'Enter' && verifyAndDownload()}
@@ -184,13 +191,13 @@ const App: React.FC = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && setView('reader')}
+                onKeyPress={(e) => e.key === 'Enter' && verifyEntry()}
                 className="w-full bg-transparent border-b border-white/10 py-5 text-center text-3xl focus:outline-none text-white tracking-[0.4em]"
                 placeholder="••••••"
                 autoFocus
               />
               <button 
-                onClick={() => setView('reader')}
+                onClick={verifyEntry}
                 className="w-full py-5 bg-white text-black font-black uppercase tracking-[0.6em] text-[10px] hover:bg-red-700 hover:text-white transition-all"
               >
                 Verify
